@@ -1,0 +1,163 @@
+{
+  "videoSrc": "media/sample.mp4",
+  "transcriptJson": "media/sample.captions.json",
+  "trim": null,
+  "music": null,
+  "focus": {
+    "x": 0.5,
+    "y": 0.35
+  },
+  "tailHoldSec": 0.8,
+  "captions": {
+    "enabled": true,
+    "mode": "karaoke",
+    "maxWords": 4,
+    "maxLineChars": 18,
+    "moneyWords": [
+      "edit",
+      "claude",
+      "ai"
+    ],
+    "bottomRanges": [
+      {
+        "from": 0,
+        "to": 60,
+        "bottom": 1720
+      }
+    ]
+  },
+  "hook": null,
+  "sfx": {
+    "enabled": true,
+    "whooshDb": -24,
+    "popDb": -26,
+    "maxWhooshes": 1,
+    "maxPops": 2,
+    "minGapSec": 8
+  },
+  "overlays": [
+    {
+      "type": "TitleBanner",
+      "at": 0.0,
+      "duration": 2.4,
+      "props": {
+        "text": "I don't edit my videos.",
+        "highlight": "edit",
+        "y": 300,
+        "fontSize": 72,
+        "instantIn": true,
+        "theme": "card"
+      },
+      "_effect": "Title Banner (hook)"
+    },
+    {
+      "type": "CalloutChip",
+      "at": {
+        "word": "Claude Code",
+        "offset": -0.05
+      },
+      "duration": 1.6,
+      "props": {
+        "text": "Claude Code",
+        "highlight": "Claude",
+        "box": [
+          60,
+          280,
+          620,
+          140
+        ],
+        "align": "left"
+      },
+      "_effect": "Logo Chip (text-only here; add \"logoSrc\": \"logos/your-logo.png\" to show a logo you are allowed to use)"
+    },
+    {
+      "type": "PushIn",
+      "at": {
+        "word": "Claude Code"
+      },
+      "duration": 4.5,
+      "props": {
+        "style": "eased",
+        "to": 1.08,
+        "x": 0.5,
+        "y": 0.35,
+        "outFrames": 36
+      },
+      "_effect": "Short Slow Push"
+    },
+    {
+      "type": "CountUpCard",
+      "at": {
+        "word": "100%",
+        "offset": -0.4
+      },
+      "duration": 2.0,
+      "hideCaptions": true,
+      "props": {
+        "to": 100,
+        "from": 0,
+        "landSec": 0.6,
+        "numberSize": 104,
+        "kicker": "This clip,",
+        "suffix": "%",
+        "unit": "edited by AI",
+        "y": 330
+      },
+      "_effect": "Count-Up Card"
+    },
+    {
+      "type": "PunchIn",
+      "at": {
+        "word": "comment"
+      },
+      "duration": 0.5,
+      "props": {
+        "to": 1.1,
+        "inFrames": 2,
+        "outFrames": 15,
+        "x": 0.5,
+        "y": 0.35,
+        "sfx": true
+      },
+      "_effect": "Quick Punch"
+    },
+    {
+      "type": "CalloutChip",
+      "at": {
+        "word": "EDIT",
+        "occurrence": 3,
+        "offset": -0.05
+      },
+      "duration": 1.0,
+      "props": {
+        "text": "Type EDIT",
+        "highlight": "EDIT",
+        "box": [
+          60,
+          280,
+          540,
+          140
+        ],
+        "align": "left"
+      },
+      "_effect": "Keyword Chip (TYPE <keyword>)"
+    },
+    {
+      "type": "TakeoverFrame",
+      "at": {
+        "word": "and I'll send",
+        "offset": -0.02
+      },
+      "duration": 4.4,
+      "hideCaptions": true,
+      "props": {
+        "text": "Comment EDIT and I'll send you the free guide.",
+        "highlight": "EDIT",
+        "theme": "light",
+        "reveal": "all"
+      },
+      "_effect": "Takeover CTA",
+      "_note": "runs through the end of the clip + tailHoldSec so the last frames are never black"
+    }
+  ]
+}

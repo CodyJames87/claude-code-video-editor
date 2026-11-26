@@ -1,0 +1,12 @@
+{
+  "_doc": "Example: an orange-accent brand. Copy this over brand.config.json to use it.",
+  "accent": "#FF5722",
+  "support": "#42A5F5",
+  "ink": "#212121",
+  "white": "#FFFFFF",
+  "neutral": "#595959",
+  "hairline": "#E5E5E5",
+  "paleFill": "#CAE6FC",
+  "softTile": "#F4F5F4",
+  "handle": "@yourhandle"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "sample-thread",
+  "contact": { "name": "Alex", "initial": "A" },
+  "handle": "@yourhandle",
+  "messages": [
+    { "from": "them", "text": "how did you edit that video so fast??" },
+    { "from": "me", "text": "I didn't. Claude Code did." },
+    { "from": "them", "text": "wait what" },
+    { "from": "me", "text": "I just review it and say what to fix", "highlight": "review", "highlightStyle": "underline" }
+  ],
+  "output": { "dir": "out/sample-thread", "coverAt": 2.0 }
+}

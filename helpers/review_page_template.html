@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>Review</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --ink:#212121; --neutral:#595959; --hair:#E5E5E5; --accent:#2F6FED; --pale:#F5F5F5; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Segoe UI", system-ui, sans-serif; color:var(--ink); background:#fff; }
+  header { display:flex; align-items:baseline; gap:16px; padding:14px 20px; border-bottom:1px solid var(--hair); }
+  header h1 { font-size:20px; margin:0; font-weight:800; }
+  header .sub { color:var(--neutral); font-size:13px; }
+  header .mode { margin-left:auto; font-size:12px; color:var(--neutral); }
+  main { display:grid; grid-template-columns: 250px 1fr 360px; gap:0; height: calc(100vh - 52px); }
+  section { padding:14px; overflow:auto; }
+  #versions { border-right:1px solid var(--hair); }
+  #notes { border-left:1px solid var(--hair); }
+  h2 { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--neutral); margin:4px 0 10px; }
+  .ver { border:1px solid var(--hair); border-radius:8px; padding:9px 10px; margin-bottom:8px; cursor:pointer; font-size:13px; }
+  .ver.a { border-color:var(--ink); box-shadow: inset 4px 0 0 var(--ink); }
+  .ver.b { border-color:var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
+  .ver .id { font-weight:800; } .ver .file { color:var(--neutral); font-size:11px; word-break:break-all; }
+  .badge { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:10px; border:1px solid var(--ink); margin-left:6px; }
+  .badge.appr { background:var(--ink); color:#fff; }
+  .row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:8px 0; }
+  button, select { font: inherit; font-size:13px; border:1px solid var(--ink); background:#fff; color:var(--ink); border-radius:6px; padding:5px 10px; cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+  button:disabled { opacity:.4; cursor:default; }
+  #stage { position:relative; display:flex; justify-content:center; gap:10px; background:var(--pale); border-radius:10px; padding:10px; height: calc(100vh - 250px); }
+  .vwrap { position:relative; height:100%; }
+  video { height:100%; max-width:100%; display:block; background:#000; border-radius:6px; }
+  #wipeWrap { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  #wipeWrap video { position:absolute; top:0; left:0; }
+  #wipeLine { position:absolute; top:0; bottom:0; width:2px; background:var(--accent); pointer-events:none; }
+  .lbl { position:absolute; top:6px; left:6px; background:rgba(33,33,33,.85); color:#fff; font-size:11px; padding:2px 6px; border-radius:4px; z-index:2; }
+  #tc { font-family: Consolas, monospace; font-size:20px; font-weight:700; min-width:150px; }
+  #fr { color:var(--neutral); font-size:12px; font-family: Consolas, monospace; }
+  input[type=range] { width:100%; accent-color: var(--accent); }
+  textarea { width:100%; min-height:70px; font:inherit; font-size:14px; border:1px solid var(--hair); border-radius:6px; padding:8px; }
+  .note { display:grid; grid-template-columns: 84px 1fr; gap:8px; border-bottom:1px solid var(--hair); padding:8px 0; font-size:13px; cursor:pointer; }
+  .note img { width:84px; border-radius:4px; border:1px solid var(--hair); }
+  .note .t { font-family: Consolas, monospace; font-weight:700; }
+  .note .v { color:var(--neutral); font-size:11px; }
+  .note .del { float:right; border:none; color:var(--neutral); padding:0 4px; }
+  .hint { color:var(--neutral); font-size:12px; line-height:1.45; }
+  kbd { border:1px solid var(--hair); border-bottom-width:2px; border-radius:4px; padding:0 4px; font-size:11px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Review</h1><span class="sub">Private: runs only on this PC (127.0.0.1). Nothing is uploaded or posted.</span>
+  <span class="mode" id="mode"></span>
+</header>
+<main>
+  <section id="versions">
+    <h2>Versions</h2>
+    <div id="vlist"></div>
+    <p class="hint">Click = watch (A). <b>Shift+click</b> = compare against it (B).<br>Versions are separate files (v1, v2 ...). Nothing is ever edited in place; approved cuts are locked.</p>
+    <h2 style="margin-top:18px">Compare</h2>
+    <div class="row"><select id="cmp"><option value="off">Off</option><option value="side">Side by side</option><option value="wipe">Wipe</option></select></div>
+    <div class="row" id="wipeRow" style="display:none"><input type="range" id="wipe" min="0" max="100" value="50"></div>
+    <div class="row"><label class="hint"><input type="checkbox" id="usePrev"> use the small preview file if there is one</label></div>
+  </section>
+  <section>
+    <div id="stage">
+      <div class="vwrap" id="wrapA"><span class="lbl" id="lblA">A</span><video id="A" preload="auto" playsinline></video>
+        <div id="wipeWrap" style="display:none"><video id="Bw" muted playsinline preload="auto"></video><div id="wipeLine"></div></div>
+      </div>
+      <div class="vwrap" id="wrapB" style="display:none"><span class="lbl" id="lblB">B</span><video id="B" muted playsinline preload="auto"></video></div>
+    </div>
+    <input type="range" id="scrub" min="0" max="0" step="1" value="0">
+    <div class="row">
+      <button id="play">Play</button>
+      <button id="back1" title="1 frame back (Left)">&#9664; 1f</button><button id="fwd1" title="1 frame forward (Right)">1f &#9654;</button>
+      <button id="back10" title="1 s back (Shift+Left)">&#9664;&#9664; 1s</button><button id="fwd10" title="1 s forward (Shift+Right)">1s &#9654;&#9654;</button>
+      <span id="tc">00:00:00:00</span><span id="fr"></span>
+    </div>
+    <p class="hint"><kbd>Space</kbd> play/pause &nbsp; <kbd>&larr;</kbd>/<kbd>&rarr;</kbd> one frame &nbsp; <kbd>Shift</kbd>+arrows one second &nbsp; <kbd>N</kbd> new note at this frame</p>
+  </section>
+  <section id="notes">
+    <h2>Note at this frame</h2>
+    <textarea id="txt" placeholder="What should change here? e.g. 'caption covers my beard', 'cut this pause', 'punch in harder'"></textarea>
+    <div class="row"><button class="primary" id="add">Add note at <span id="addtc">00:00:00:00</span></button></div>
+    <h2 style="margin-top:14px">Notes <span id="count"></span></h2>
+    <div class="row"><button id="exJson">Export JSON</button><button id="exMd">Export Markdown</button></div>
+    <p class="hint" id="exmsg"></p>
+    <div id="nlist"></div>
+  </section>
+</main>
+<script>
+const EMBEDDED = /*__MANIFEST__*/null;
+let man = EMBEDDED, notes = [], server = false, A = null, B = null, fps = 30;
+const $ = (id) => document.getElementById(id);
+const vA = $('A'), vB = $('B'), vBw = $('Bw');
+const tcOf = (t) => { const f = Math.floor(t * fps + 1e-3), s = Math.floor(f / Math.round(fps)), r = f % Math.round(fps);
+  const p = (n) => String(n).padStart(2, '0'); return `${p(Math.floor(s / 3600))}:${p(Math.floor(s / 60) % 60)}:${p(s % 60)}:${p(r)}`; };
+const frameOf = (t) => Math.floor(t * fps + 1e-3);  // seeks land mid-frame ((n + 0.5) / fps), so floor = the shown frame
+const srcOf = (v) => ($('usePrev').checked && v.preview) ? v.preview : v.file;
+
+async function boot() {
+  try { const r = await fetch('api/manifest'); if (r.ok) { man = await r.json(); server = true; } } catch (e) {}
+  if (server) { notes = await (await fetch('api/notes')).json(); }
+  else { notes = JSON.parse(localStorage.getItem('notes:' + (man && man.name)) || '[]'); }
+  $('mode').textContent = server ? 'Notes save to this folder (notes/ + frames/).' :
+    'Opened without the launcher: notes stay in this browser only. Close and use "Open Review.cmd" to save them with frames.';
+  $('title').textContent = 'Review: ' + man.name;
+  document.title = 'Review: ' + man.name;
+  // open on the newest version that's still under review (approved / reference versions are for comparing)
+  A = [...man.versions].reverse().find((v) => !/approved|reference/i.test(v.status || '')) || man.versions[man.versions.length - 1];
+  renderVersions(); load(); renderNotes();
+}
+function renderVersions() {
+  $('vlist').innerHTML = '';
+  for (const v of man.versions) {
+    const d = document.createElement('div');
+    d.className = 'ver' + (A && v.id === A.id ? ' a' : '') + (B && v.id === B.id ? ' b' : '');
+    d.innerHTML = `<span class="id">${v.id}</span>${v.status === 'approved' ? '<span class="badge appr">APPROVED, locked</span>' : `<span class="badge">${v.status || 'in review'}</span>`}
+      <div>${v.label || ''}</div><div class="file">${v.file}${v.duration ? ` &middot; ${v.duration.toFixed(2)} s` : ''}</div>`;
+    d.onclick = (e) => { if (e.shiftKey) { if (v.id === A.id) return; B = (B && B.id === v.id) ? null : v; if (B && $('cmp').value === 'off') $('cmp').value = 'side'; }
+      else { A = v; if (B && B.id === v.id) B = null; } renderVersions(); load(); };
+    $('vlist').appendChild(d);
+  }
+}
+function load() {
+  const t = vA.currentTime || 0;
+  fps = A.fps || 30;
+  if (vA.dataset.src !== srcOf(A)) { vA.src = srcOf(A); vA.dataset.src = srcOf(A); vA.currentTime = t; }
+  $('lblA').textContent = 'A ' + A.id;
+  const mode = $('cmp').value;
+  $('wrapB').style.display = (B && mode === 'side') ? '' : 'none';
+  $('wipeWrap').style.display = (B && mode === 'wipe') ? '' : 'none';
+  $('wipeRow').style.display = mode === 'wipe' ? '' : 'none';
+  if (B) { for (const v of [vB, vBw]) if (v.dataset.src !== srcOf(B)) { v.src = srcOf(B); v.dataset.src = srcOf(B); } $('lblB').textContent = 'B ' + B.id; }
+  wipe(); sync();
+}
+function wipe() { const p = $('wipe').value; const w = vA.clientWidth, h = vA.clientHeight;
+  vBw.style.width = w + 'px'; vBw.style.height = h + 'px'; $('wipeWrap').style.clipPath = `inset(0 0 0 ${p}%)`; $('wipeLine').style.left = (w * p / 100) + 'px'; }
+function sync() { for (const v of [vB, vBw]) { if (!B || !v.src) continue; if (Math.abs(v.currentTime - vA.currentTime) > 0.5 / fps) v.currentTime = vA.currentTime;
+  if (vA.paused !== v.paused) vA.paused ? v.pause() : v.play().catch(() => {}); } }
+function tick() { const t = vA.currentTime; $('tc').textContent = tcOf(t); $('addtc').textContent = tcOf(t);
+  $('fr').textContent = `frame ${frameOf(t)} / ${Math.round((vA.duration || 0) * fps)}`; $('scrub').max = Math.round((vA.duration || 0) * fps); $('scrub').value = frameOf(t);
+  $('play').textContent = vA.paused ? 'Play' : 'Pause'; }
+function seekFrame(f) { vA.pause(); const n = Math.max(0, Math.min(f, Math.round(vA.duration * fps) - 1)); vA.currentTime = (n + 0.5) / fps; }
+vA.addEventListener('timeupdate', () => { tick(); sync(); });
+vA.addEventListener('seeked', () => { tick(); sync(); });
+vA.addEventListener('loadedmetadata', () => { tick(); wipe(); });
+if (vA.requestVideoFrameCallback) { const cb = () => { tick(); vA.requestVideoFrameCallback(cb); }; vA.requestVideoFrameCallback(cb); }
+$('scrub').oninput = (e) => seekFrame(+e.target.value);
+$('play').onclick = () => vA.paused ? vA.play() : vA.pause();
+$('back1').onclick = () => seekFrame(frameOf(vA.currentTime) - 1); $('fwd1').onclick = () => seekFrame(frameOf(vA.currentTime) + 1);
+$('back10').onclick = () => seekFrame(frameOf(vA.currentTime) - Math.round(fps)); $('fwd10').onclick = () => seekFrame(frameOf(vA.currentTime) + Math.round(fps));
+$('cmp').onchange = load; $('wipe').oninput = wipe; $('usePrev').onchange = load; window.onresize = wipe;
+document.addEventListener('keydown', (e) => { if (e.target.tagName === 'TEXTAREA') return;
+  if (e.key === ' ') { e.preventDefault(); $('play').click(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); seekFrame(frameOf(vA.currentTime) - (e.shiftKey ? Math.round(fps) : 1)); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); seekFrame(frameOf(vA.currentTime) + (e.shiftKey ? Math.round(fps) : 1)); }
+  if (e.key === 'n' || e.key === 'N') { e.preventDefault(); vA.pause(); $('txt').focus(); } });
+function grabFrame() { try { const c = document.createElement('canvas'); c.width = 540; c.height = Math.round(540 * vA.videoHeight / vA.videoWidth);
+  c.getContext('2d').drawImage(vA, 0, 0, c.width, c.height); return c.toDataURL('image/png'); } catch (e) { return null; } }
+$('add').onclick = async () => {
+  const text = $('txt').value.trim(); if (!text) { $('txt').focus(); return; }
+  vA.pause(); const t = frameOf(vA.currentTime) / fps;
+  if (server) {
+    const r = await fetch('api/notes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version: A.id, t, text, image: grabFrame() }) });
+    if (!r.ok) { alert('Could not save the note'); return; } notes.push(await r.json());
+  } else {
+    notes.push({ id: Date.now(), version: A.id, file: A.file, t, timecode: tcOf(t), frame: frameOf(t), text, image: grabFrame(), created: new Date().toISOString() });
+    localStorage.setItem('notes:' + man.name, JSON.stringify(notes));
+  }
+  $('txt').value = ''; renderNotes();
+};
+function renderNotes() {
+  $('count').textContent = `(${notes.length})`; $('nlist').innerHTML = '';
+  for (const n of [...notes].sort((a, b) => a.version.localeCompare(b.version) || a.t - b.t)) {
+    const d = document.createElement('div'); d.className = 'note';
+    d.innerHTML = `<div>${n.image ? `<img src="${n.image}">` : ''}</div><div><button class="del" title="remove note">&times;</button>
+      <span class="t">${n.timecode}</span> <span class="v">${n.version}, frame ${n.frame}</span><div></div></div>`;
+    d.querySelector('div > div > div').textContent = n.text;
+    d.onclick = () => { const v = man.versions.find((x) => x.id === n.version); if (v && v.id !== A.id) { A = v; renderVersions(); load(); }
+      setTimeout(() => seekFrame(n.frame), 150); };
+    d.querySelector('.del').onclick = async (e) => { e.stopPropagation(); if (!confirm('Remove this note?')) return;
+      if (server) await fetch('api/notes/' + n.id, { method: 'DELETE' }); notes = notes.filter((x) => x.id !== n.id);
+      if (!server) localStorage.setItem('notes:' + man.name, JSON.stringify(notes)); renderNotes(); };
+    $('nlist').appendChild(d);
+  }
+}
+function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); }
+function toMd() { const L = [`# Review notes: ${man.name}`, '', 'Paste this into the next Claude brief. Times are on the version\'s own timeline.', ''];
+  for (const v of man.versions) { const vn = notes.filter((n) => n.version === v.id).sort((a, b) => a.t - b.t); if (!vn.length) continue;
+    L.push(`## ${v.id}: ${v.label || ''} (\`${v.file}\`)`, ''); for (const n of vn) L.push(`- **${n.timecode}** (${n.t.toFixed(3)} s, frame ${n.frame}): ${n.text}`); L.push(''); }
+  return L.join('\n'); }
+$('exJson').onclick = async () => { if (server) { const r = await (await fetch('api/export', { method: 'POST' })).json(); $('exmsg').textContent = 'Saved in this folder: ' + r.written.join(', '); }
+  download(`${man.name}-notes.json`, JSON.stringify({ name: man.name, versions: man.versions, notes: notes.map((n) => ({ ...n, image: server ? n.image : null })) }, null, 2), 'application/json'); };
+$('exMd').onclick = async () => { if (server) { const r = await (await fetch('api/export', { method: 'POST' })).json(); $('exmsg').textContent = 'Saved in this folder: ' + r.written.join(', '); }
+  download(`${man.name}-notes.md`, toMd(), 'text/markdown'); };
+boot();
+</script>
+</body>
+</html>

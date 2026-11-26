@@ -1,0 +1,10 @@
+{
+  "_doc": "Copy to deliver.config.json (git-ignored). helpers/deliver.py copies finished cuts + a small preview here. Point drive_local_path at a synced Google Drive / Dropbox / iCloud folder to review on your phone. Empty = review/ in this repo.",
+  "drive_folder_name": "Video Editor Output",
+  "drive_folder_url": "",
+  "drive_local_path": "",
+  "auto_find_drive": false,
+  "fallback_dir": "review",
+  "preview_max_mb": 1.0,
+  "preview_size": "540x960"
+}

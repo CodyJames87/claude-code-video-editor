@@ -1,0 +1,12 @@
+{
+  "_doc": "Your brand colors. Every Remotion overlay (src/brand.ts) and Python helper (helpers/ffutil.py) reads this file. accent = the ONE highlight color (one money word per caption, chips, count-ups). See examples/brand.orange.json for an orange example.",
+  "accent": "#2F6FED",
+  "support": "#8AA4C8",
+  "ink": "#1A1A1A",
+  "white": "#FFFFFF",
+  "neutral": "#5F6368",
+  "hairline": "#E5E5E5",
+  "paleFill": "#E3EAF7",
+  "softTile": "#F4F5F4",
+  "handle": "@yourhandle"
+}

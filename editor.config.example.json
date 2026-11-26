@@ -1,0 +1,5 @@
+{
+  "_doc": "Copy to editor.config.json (git-ignored). footage_inbox = an extra folder of raw clips for helpers/footage_catalog.py to index (e.g. a synced Drive folder). glossary = your own topic tags (tag -> regex).",
+  "footage_inbox": "",
+  "glossary": { "pricing": "\\b(pric(e|es|ing)|quotes?)\\b" }
+}

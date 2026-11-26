@@ -1,0 +1,40 @@
+{
+  "name": "claude-code-video-editor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Open-source Claude Code + Remotion kit for editing talking-head and short-form videos (captions, zooms, cards, QA gate).",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "setup:whisper": "node scripts/install-whisper.mjs",
+    "extract-audio": "node scripts/extract-audio.mjs",
+    "transcribe": "node scripts/transcribe.mjs",
+    "render:shorts": "remotion render ShortsVideo",
+    "render:feed": "remotion render FeedVideo",
+    "render:long": "remotion render LongForm",
+    "typecheck": "tsc --noEmit",
+    "setup:check": "node scripts/py.mjs helpers/env_check.py",
+    "sample": "node scripts/py.mjs examples/make_sample.py",
+    "demo": "node scripts/demo.mjs"
+  },
+  "dependencies": {
+    "@remotion/captions": "4.0.545",
+    "@remotion/cli": "4.0.545",
+    "@remotion/elevenlabs": "4.0.545",
+    "@remotion/fonts": "4.0.545",
+    "@remotion/install-whisper-cpp": "4.0.545",
+    "@remotion/media-utils": "4.0.545",
+    "puppeteer-core": "^25.19.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.545"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

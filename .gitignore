@@ -1,0 +1,43 @@
+# dependencies + tool installs
+node_modules/
+whisper.cpp/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# your media and outputs (never commit footage)
+public/media/*
+!public/media/.gitkeep
+public/logos/*
+!public/logos/README.md
+public/music/
+assets/textthread/custom/*
+!assets/textthread/custom/README.md
+out/
+review/
+review-pages/
+catalog/
+*.mp4
+*.mov
+*.m4v
+*.mkv
+*.webm
+*.wav
+!public/sfx/*.wav
+*.mp3
+*.16k.wav
+
+# your private config
+.env
+.env.*
+deliver.config.json
+editor.config.json
+props/*
+!props/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
